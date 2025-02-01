@@ -3,23 +3,24 @@ export function memoize<T extends (...args: any[]) => void>(callback: T) {
 
   const memoizeFunction = (data: any) => {
     const key = createMemoizedKey(data)
+    const cachedValue = cachedData.get(key)
 
-    if (!cachedData.get(key)) {
+    if (!cachedValue) {
       cachedData.set(key, callback(data))
       return callback(data)
     }
 
-    return cachedData.get(key)
+    return cachedValue
   }
 
-  const memoizeCacheControll = {
+  const memoizeCacheControl = {
     delete(data: any) {
       const key = createMemoizedKey(data)
       cachedData.delete(key)
     },
   }
 
-  memoizeFunction.cache = memoizeCacheControll
+  memoizeFunction.cache = memoizeCacheControl
 
   return memoizeFunction
 }
