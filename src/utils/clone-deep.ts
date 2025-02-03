@@ -1,17 +1,19 @@
-export function cloneDeep(target: any) {
+export function cloneDeep<T>(target: T[]): T[]
+export function cloneDeep<T extends Record<string, any> = Record<string, any>>(target: T): T
+
+export function cloneDeep<T>(target: T) {
   if (typeof target !== "object" || target === null) {
     return target
   }
 
-  const cloned: Record<string, any> = Array.isArray(target) ? [] : {}
-
-  for (const [key, value] of Object.entries(target)) {
-    if (typeof value === "object") {
-      cloned[key] = cloneDeep(value)
-    } else {
-      cloned[key] = value
-    }
+  if (Array.isArray(target)) {
+    return target.map((item) => cloneDeep(item))
   }
 
-  return cloned
+  const cloned: Record<string, any> = {}
+  for (const [key, value] of Object.entries(target)) {
+    cloned[key] = cloneDeep(value)
+  }
+
+  return cloned as T
 }
