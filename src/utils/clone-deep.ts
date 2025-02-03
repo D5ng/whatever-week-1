@@ -15,5 +15,5 @@ export function cloneDeep<T>(target: T) {
     cloned[key] = cloneDeep(value)
   }
 
-  return cloned as T
+  return cloned
 }
