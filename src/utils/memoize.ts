@@ -1,8 +1,9 @@
-export function memoize<T extends (...args: any[]) => void>(callback: T) {
-  const cachedData: Map<string, any> = new Map()
+type DefaultCallback = (...args: any[]) => any
 
-  const memoizeFunction = (data: any) => {
-    const key = createMemoizedKey(data)
+export function memoize<T extends DefaultCallback>(callback: T, key: string) {
+  const cachedData: Map<string, ReturnType<T>> = new Map()
+
+  const memoizeFunction = <TData>(data: TData): ReturnType<T> => {
     const cachedValue = cachedData.get(key)
 
     if (!cachedValue) {
@@ -14,8 +15,7 @@ export function memoize<T extends (...args: any[]) => void>(callback: T) {
   }
 
   const memoizeCacheControl = {
-    delete(data: any) {
-      const key = createMemoizedKey(data)
+    delete() {
       cachedData.delete(key)
     },
   }
@@ -23,12 +23,4 @@ export function memoize<T extends (...args: any[]) => void>(callback: T) {
   memoizeFunction.cache = memoizeCacheControl
 
   return memoizeFunction
-}
-
-/**========================================================================
- *                           Memoize Helper Function
- *========================================================================**/
-
-function createMemoizedKey(data: Record<string, any>) {
-  return Object.keys(data).join("")
 }
